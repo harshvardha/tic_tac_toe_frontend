@@ -1,0 +1,51 @@
+.game {
+    display: flex;
+    flex-direction: column;
+    background-image: radial-gradient(yellow, green);
+    height: 100vh;
+}
+
+.game--players {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 1rem;
+    color: white;
+    font-family: sans-serif;
+    font-weight: bolder;
+}
+
+#player1 {
+    border-top: 5px solid black;
+    border-right: 5px solid black;
+    border-bottom: 5px solid black;
+    border-top-right-radius: 1.25rem;
+    border-bottom-right-radius: 1.25rem;
+    padding: 1rem;
+}
+
+#player2 {
+    border-top: 5px solid black;
+    border-left: 5px solid black;
+    border-bottom: 5px solid black;
+    border-top-left-radius: 1.25rem;
+    border-bottom-left-radius: 1.25rem;
+    padding: 1rem;
+}
+
+.game--board {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    align-self: center;
+}
+
+#element {
+    text-align: center;
+    width: 4rem;
+    padding: 1rem;
+    font-family: sans-serif;
+    font-size: larger;
+    cursor: pointer;
+    outline: none;
+    border: 1px solid black;
+
+}
