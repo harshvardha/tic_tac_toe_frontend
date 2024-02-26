@@ -1,0 +1,9 @@
+.block {
+    background-color: white;
+    width: 3rem;
+    height: 3rem;
+    border: 1px solid black;
+    cursor: pointer;
+    text-align: center;
+    padding: 1rem;
+}
