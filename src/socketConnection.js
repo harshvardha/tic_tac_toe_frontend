@@ -9,4 +9,8 @@ socket.on("connect", () => {
     isSocketConnected = true;
 });
 
+socket.on("disconnect", () => {
+    isSocketConnected = false;
+})
+
 export { socket, isSocketConnected };
