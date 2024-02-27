@@ -2,6 +2,7 @@ import { useEffect, useState, useRef } from "react";
 import { useLocation } from "react-router-dom";
 import Block from "../../components/Block/Block";
 import { socket, isSocketConnected } from "../../socketConnection";
+import { X, O } from "../../ColorConstants";
 import "./Game.css";
 
 const Game = () => {
@@ -13,31 +14,34 @@ const Game = () => {
     const [hasGameResult, setHasGameResult] = useState(false);
     const [resultMessage, setResultMessage] = useState("");
     const [winnerBlocks, setWinnerBlocks] = useState();
+    const [winnerSide, setWinnerSide] = useState();
     const refMe = useRef();
     const opponentRef = useRef();
 
     const showGameResult = (data) => {
-        console.log(data);
         if (data.tie) {
             setResultMessage("Its A Tie.");
         }
         if (data.winner) {
             setWinnerBlocks(data.blocks);
+            setWinnerSide(data.side);
             const mySide = refMe.current.innerHTML.split(':')[1].trim();
             const opponentPlayer = opponentRef.current.innerHTML.split(':');
-            console.log(mySide);
-            console.log(opponentPlayer);
             if (data.side === mySide) {
-                console.log("You won");
                 setResultMessage("You Won");
             }
             else if (data.side === opponentPlayer[1].trim()) {
-                console.log(`${opponentPlayer[0]} Won.`);
                 setResultMessage(`${opponentPlayer[0]} Won.`);
             }
         }
         setHasGameResult(true);
         setMyChance(false);
+    }
+
+    const handleOpponentDisconnection = () => {
+        setHasGameResult(true);
+        setMyChance(false);
+        setResultMessage("Opponent Disconnected. You Won");
     }
 
     useEffect(() => {
@@ -53,15 +57,25 @@ const Game = () => {
             setMe(players[2]);
             setOpponent(players[1]);
         }
-        if (isSocketConnected)
+        if (isSocketConnected) {
             socket.on("game-result", data => showGameResult(data));
+            socket.on("opponent-disconnected", handleOpponentDisconnection);
+        }
     }, []);
 
     return (
         <div className="game">
             <div className="game--players">
-                <p id="me" ref={refMe}>{me?.username} : {me?.side}</p>
-                <p id="opponent" ref={opponentRef}>{opponent?.username} : {opponent?.side}</p>
+                <p
+                    id="me"
+                    ref={refMe}
+                    style={myChance && !hasGameResult ? me?.side === "x" ? { backgroundColor: X } : me?.side === "o" ? { backgroundColor: O } : {} : {}}
+                >{me?.username} : {me?.side}</p>
+                <p
+                    id="opponent"
+                    ref={opponentRef}
+                    style={!myChance && !hasGameResult ? opponent?.side === "x" ? { backgroundColor: X } : opponent?.side === "o" ? { backgroundColor: O } : {} : {}}
+                >{opponent?.username} : {opponent?.side}</p>
             </div>
             <div className="game--board">
                 {[1, 2, 3, 4, 5, 6, 7, 8, 9].map(blockNo =>
@@ -72,10 +86,15 @@ const Game = () => {
                         myChance={myChance}
                         setMyChance={setMyChance}
                         winnerBlocks={winnerBlocks}
+                        hasGameResult={hasGameResult}
+                        winnerSide={winnerSide}
                     />
                 )}
             </div>
-            {hasGameResult && <h1>{resultMessage}</h1>}
+            {hasGameResult && <h1
+                className="game--resultMessage"
+                style={winnerSide === "x" ? { color: X } : winnerSide === "o" ? { color: O } : {}}
+            >{resultMessage}</h1>}
         </div>
     )
 }
