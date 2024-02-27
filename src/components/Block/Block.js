@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { socket, isSocketConnected } from "../../socketConnection";
+import { X, O } from "../../ColorConstants";
 import "./Block.css";
 
 const Block = ({
@@ -8,14 +9,15 @@ const Block = ({
     playerNo,
     myChance,
     setMyChance,
-    winnerBlocks
+    winnerBlocks,
+    hasGameResult,
+    winnerSide
 }) => {
     const [blockValue, setBlockValue] = useState("");
     const ref = useRef();
 
     const sendMove = () => {
         try {
-            console.log(myChance);
             if (isSocketConnected && myChance) {
                 socket.emit("move", {
                     side,
@@ -46,25 +48,33 @@ const Block = ({
     }, [])
 
     return (
-        <div>
+        <>
             <button
                 className="block"
                 onClick={sendMove}
                 ref={ref}
+                disabled={hasGameResult ? true : false}
                 style={
-                    {
-                        backgroundColor: (
-                            winnerBlocks &&
-                                (
-                                    blockNo === winnerBlocks[0] ||
-                                    blockNo === winnerBlocks[1] ||
-                                    blockNo === winnerBlocks[2]
-                                ) ? "black" : "white"
-                        )
-                    }
+                    winnerBlocks && (
+                        blockNo === winnerBlocks[0] ||
+                        blockNo === winnerBlocks[1] ||
+                        blockNo === winnerBlocks[2]
+                    ) ? winnerSide === "x" ? {
+                        backgroundColor: X,
+                        color: "white"
+                    } : winnerSide === "o" ? {
+                        backgroundColor: O,
+                        color: "white"
+                    } : {} : blockValue === "x" ? {
+                        color: X,
+                        backgroundColor: "white"
+                    } : blockValue === "o" ? {
+                        color: O,
+                        backgroundColor: "white"
+                    } : {}
                 }
             >{blockValue}</button>
-        </div>
+        </>
     )
 }
 

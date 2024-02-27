@@ -53,15 +53,18 @@ const Home = () => {
 
     return (
         <div className="home">
-            <h1>Type Username</h1>
-            <input
-                id="username"
-                type="text"
-                placeholder="username"
-                value={username}
-                onChange={(event) => setUsername(event.target.value)}
-            />
-            {searchingForOpponent ? <p>Waiting for opponent...</p> : <button type="button" id="search_game_button" onClick={searchForOpponent}>search for game</button>}
+            <h1 id="title">TIC-TAC-TOE</h1>
+            <div className="home--username">
+                <h1 style={{ color: "red" }}>Type Username</h1>
+                <input
+                    id="username"
+                    type="text"
+                    placeholder="username"
+                    value={username}
+                    onChange={(event) => setUsername(event.target.value)}
+                />
+                {searchingForOpponent ? <p>Waiting for opponent...</p> : <button type="button" id="search_game_button" onClick={searchForOpponent}>search for game</button>}
+            </div>
         </div>
     )
 }
